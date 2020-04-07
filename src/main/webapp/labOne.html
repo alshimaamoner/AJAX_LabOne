@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script>
+        var req= null;
+        function submitForm(){
+            if (window.XMLHttpRequest)
+                req= new XMLHttpRequest();
+            else if (window.ActiveXObject)
+                req= new ActiveXObject(Microsoft.XMLHTTP);
+
+            req.onreadystatechange= handleReq;
+            req.open( "GET", "simpleResponse.html?t="+new Date().getTime(), true);
+            req.send(null);
+        }
+        function handleReq()
+        {
+            if (req.readyState== 4)
+                if ( req.status== 200)
+                    document.ajax.dyn.value="Received:" + req.responseText; else
+                    document.ajax.dyn.value="Error code " + req.status;
+        }
+        //////////////////////////////////////////////////////////
+        var req1= null;
+        function submitForm2(){
+            if (window.XMLHttpRequest)
+                req1= new XMLHttpRequest();
+            else if (window.ActiveXObject)
+                req1= new ActiveXObject(Microsoft.XMLHTTP);
+            req1.onreadystatechange= handleStateChange2;
+            result=document.getElementById("name").value;
+            url= "ShowResult"+"?uName="+result+ "&timeStamp=" + new Date().getTime();
+            req1.open( "GET", url, true);
+            req1.send(null);
+        }
+
+        function handleStateChange2() {
+            if (req1.readyState== 4 && req1.status == 200) {
+                xmlvalue=req1.responseText;
+                document.getElementById("status").value = xmlvalue;
+            }
+        }
+
+        //////////////////////////////////////////////////////////////////
+        var xmlHttp;
+        function startRequest() {
+            console.log("init req")
+            createXMLHttpRequest();
+            xmlHttp.onreadystatechange= handleStateChange3;
+            xmlHttp.open("GET", "innerHTML.xml", true);
+            xmlHttp.send(null);
+        }
+
+        function createXMLHttpRequest() {
+            if (window.ActiveXObject)
+                xmlHttp= new ActiveXObject("Microsoft.XMLHTTP");
+            else if (window.XMLHttpRequest)
+                xmlHttp= new XMLHttpRequest();
+        }
+        function handleStateChange3() {
+            if (xmlHttp.readyState== 4 && xmlHttp.status== 200)
+                document.getElementById("results").innerHTML= xmlHttp.responseText;
+        }
+    </script>
+    </head>
+<body onload= "setInterval('startRequest()' ,5000)">
+<FORM method = "POST" name = "ajax" action = "">
+    <input type = "button"  value = "Submit" onclick = "submitForm();">
+    <input type = "text"  value = "" name = "dyn">
+
+</FORM>
+<br/><br/><br/><br/>
+<div>
+    <FORM name = "ajax2" action = "">
+        Enter Your Name:
+        <input type = "text" id = "name" value = "" size = "20" onblur= "submitForm2();" required>
+        <input type = "text" id = "status" value = "" color="red" size = "20" >
+        <br/><br/><br/>
+        Enter Your Password:
+        <input type = "password" id = "pass" value = "" size = "20" >
+        <br/><br/>
+        <input type = "button" value = "Submit" >
+
+    </FORM>
+</div>
+
+<br/><br/><br/><br/><br/><br/><br/>
+
+<div id="results">
+</div>
+<script>
+    document.getElementById("results").addEventListener("onload",startRequest);
+</script>
+
+</body>
+</html>
